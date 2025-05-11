@@ -58,7 +58,7 @@
                                     <select id="shelf" name="shelf" class="form-select" required>
                                         <option value="">Select Shelf</option>
                                         {% for shelf in shelves %}
-                                            <option value="{{ shelf.id }}">{{ shelf.name }} ({{ shelf.space_left }} capacity)</option>
+                                            <option value="{{ shelf.id }}">{{ shelf.name }} ({{ shelf.current_load }}/{{ shelf.capacity }})</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -79,7 +79,18 @@
                     <div class="card-footer">
                         {% if messages %}
                             {% for message in messages %}
-                                <span>{{ message }}</span>
+                                <div class="alert 
+                                        {% if message.tags == 'debug' %}alert-secondary
+                                        {% elif message.tags == 'info' %}alert-info
+                                        {% elif message.tags == 'success' %}alert-success
+                                        {% elif message.tags == 'warning' %}alert-warning
+                                        {% elif message.tags == 'error' %}alert-danger
+                                        {% else %}alert-primary
+                                        {% endif %} 
+                                        alert-dismissible fade show" role="alert">
+                                            {{ message }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
                             {% endfor %}
                         {% endif %}
                     </div>

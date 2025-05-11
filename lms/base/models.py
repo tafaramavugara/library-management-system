@@ -19,6 +19,13 @@ class Shelf(models.Model):
     def __str__(self):
         return self.name
 
+    def is_full(self):
+        return self.book_set.count() >= self.capacity
+
+    def current_load(self):
+        return self.book_set.count()
+
+
 class Book(models.Model):
     BOOK_FORM_CHOICES = [
         ('1','1'),

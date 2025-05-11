@@ -479,7 +479,7 @@ def NewBook(request):
             subject = Subject.objects.get(id=subject_id)
             shelf = Shelf.objects.get(id=shelf_id)
 
-            if shelf.book_set.count() >= shelf.capacity:
+            if shelf.current_load() >= shelf.capacity:
                 messages.error(request, f"The shelf '{shelf.name}' is full. Please choose another shelf.")
                 return redirect('lib-new-book')
 
