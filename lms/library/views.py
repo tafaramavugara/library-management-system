@@ -924,3 +924,64 @@ def DeleteSubject(request, subject_id):
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 #                                                       END SUBJECTS VIEWS
 # ----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       FINES VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url='lib-login')
+def FineList(request):
+    q = request.GET.get('q', '').strip()  # Search by student ID or name
+    status_filter = request.GET.get('status', 'all')  # Filter by fine status
+
+    # Base queryset
+    fines = Fine.objects.select_related('borrow__student', 'borrow__book')
+
+    # Apply search filter
+    if q:
+        fines = fines.filter(
+            Q(borrow__student__student_id__icontains=q) |
+            Q(borrow__student__full_name__icontains=q)
+        )
+
+    # Apply status filter
+    if status_filter == 'paid':
+        fines = fines.filter(status='paid')
+    elif status_filter == 'unpaid':
+        fines = fines.filter(status='unpaid')
+
+    # Pagination
+    paginator = Paginator(fines.order_by('-id'), 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'title': 'Fines List',
+        'fines': page_obj,
+        'current_q': q,
+        'current_status_filter': status_filter,
+    }
+    return render(request, 'Librarian/fines-list.html', context)
+
+@login_required(login_url='lib-login')
+def fine_detail(request, fine_id):
+    fine = get_object_or_404(Fine, id=fine_id)
+    return render(request, 'Librarian/fines-detail.html', {'fine': fine})
+
+@login_required(login_url='lib-login')
+def PayFine(request, fine_id):
+    fine = get_object_or_404(Fine, id=fine_id)
+    
+    if fine.status == 'paid':
+        messages.info(request, 'This fine is already paid.')
+    else:
+        fine.status = 'paid'
+        fine.save()
+        messages.success(request, 'Fine has been marked as paid.')
+
+    return redirect('lib-books-borrowed')  # Or wherever appropriate
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       END FINES VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------

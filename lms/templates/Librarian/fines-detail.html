@@ -1,0 +1,79 @@
+{% extends 'Librarian/components/main.html' %}
+
+{% block content %}
+  {% include 'Librarian/components/sidebar.html' %}
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+  {% include 'Librarian/components/navbar.html' %}
+
+  <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <div class="card">
+          <div class="card-header bg-gradient-dark text-white py-3">
+            <h5 class="mb-0">Fine Detail</h5>
+          </div>
+          <div class="card-body">
+            <h6 class="mb-3">Student Information</h6>
+            <ul class="list-group mb-3">
+              <li class="list-group-item">
+                <strong>Name:</strong> {{ fine.borrow.student.full_name }}
+              </li>
+              <li class="list-group-item">
+                <strong>Student ID:</strong> {{ fine.borrow.student.student_id }}
+              </li>
+              <li class="list-group-item">
+                <strong>Class:</strong> {{ fine.borrow.student.form }}
+              </li>
+            </ul>
+
+            <h6 class="mb-3">Book Information</h6>
+            <ul class="list-group mb-3">
+              <li class="list-group-item">
+                <strong>Title:</strong> {{ fine.borrow.book.title }}
+              </li>
+              <li class="list-group-item">
+                <strong>ISBN:</strong> {{ fine.borrow.book.isbn }}
+              </li>
+              <li class="list-group-item">
+                <strong>Shelf:</strong> {{ fine.borrow.book.shelf.name }}
+              </li>
+            </ul>
+
+            <h6 class="mb-3">Fine Details</h6>
+            <ul class="list-group mb-4">
+              <li class="list-group-item">
+                <strong>Borrowed On:</strong> {{ fine.borrow.borrow_date }}
+              </li>
+              <li class="list-group-item">
+                <strong>Due Date:</strong> {{ fine.borrow.due_date }}
+              </li>
+              <li class="list-group-item">
+                <strong>Returned On:</strong> {{ fine.borrow.return_date|default:"Not Returned" }}
+              </li>
+              <li class="list-group-item">
+                <strong>Amount:</strong> {{ fine.amount }} TZS
+              </li>
+              <li class="list-group-item">
+                <strong>Status:</strong>
+                {% if fine.status == 'paid' %}
+                  <span class="badge bg-success">Paid</span>
+                {% else %}
+                  <span class="badge bg-danger">Unpaid</span>
+                {% endif %}
+              </li>
+            </ul>
+
+            <div class="d-flex justify-content-between">
+              <a href="{% url 'lib-fine-list' %}" class="btn btn-secondary">Back to List</a>
+              {% if fine.status == 'unpaid' %}
+              <a href="{% url 'lib-fine-pay' fine.id %}" class="btn btn-success">Mark as Paid</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% include 'Librarian/components/footer.html' %}
+  </div>
+</main>
+{% endblock %}
