@@ -255,7 +255,7 @@ def NewBorrow(request):
             borrow.save()
 
             messages.success(request, f"Book '{book.title}' borrowed successfully!")
-            return redirect('lib-book-list')  # Redirect to a list of books or other relevant page
+            return redirect('lib-books-borrowed')  # Redirect to a list of books or other relevant page
 
         except Student.DoesNotExist:
             messages.error(request, "Invalid student selected!")
@@ -875,6 +875,51 @@ def NewSubject(request):
         'title': 'New Subject'
     }
     return render(request, 'Librarian/new-subject.html', context)
+
+
+@login_required(login_url='lib-login')
+def EditSubject(request, subject_id):
+    # Get the shelf object by ID or raise a 404 if not found
+    subject = get_object_or_404(Subject, id=subject_id)
+    
+    if request.method == "POST":
+        name = request.POST.get("subject_name")
+        
+        
+        # Validate inputs
+        if not name:
+            messages.error(request, "All fields are required!")
+        else:
+            # Update the shelf details
+            subject.name = name
+            subject.save()
+            messages.success(request, f"{subject.name} updated successfully!")
+            return redirect('shelves')  # Replace 'shelves' with your shelf list URL pattern
+    
+    context = {
+        'title': 'Edit Subject',
+        'subject': subject
+    }
+    return render(request, 'Librarian/edit-subject.html', context)
+
+
+@login_required(login_url='lib-login')
+def DeleteSubject(request, subject_id):
+    # Get the shelf object by ID or raise a 404 if not found
+    subject = get_object_or_404(Subject, id=subject_id)
+
+    # Check if the request method is POST to confirm the deletion
+    if request.method == "POST":
+        subject.delete()
+        messages.success(request, f"{subject.name} deleted successfully!")
+        return redirect('shelves')  # Redirect to the shelves list page
+
+    context = {
+        'title': 'Delete Subject',
+        'subject': subject
+    }
+    return render(request, 'Librarian/confirm-delete-subject.html', context)
+
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 #                                                       END SUBJECTS VIEWS

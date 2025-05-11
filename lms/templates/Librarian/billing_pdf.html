@@ -62,20 +62,22 @@
         <tbody>
             {% for borrow in borrowed_books %}
             <tr>
-                <td>{{ borrow.book.isbn }}</td>
-                <td>{{ borrow.book.subject.name }}</td>
-                <td>{{ borrow.book.title }}</td>
-                <td>{{ borrow.book.shelf.name }}</td>
-                <td>{{ borrow.status|capfirst }}</td>
-                <td>{{ borrow.borrow_date }}</td>
+                <td><small>{{ borrow.book.isbn }}</small></td>
+                <td><small>{{ borrow.book.subject.name }}</small></td>
+                <td><small>{{ borrow.book.title }}</small></td>
+                <td><small>{{ borrow.book.shelf.name }}</small></td>
+                <td><small>{{ borrow.status|capfirst }}</small></td>
+                <td><small>{{ borrow.borrow_date }}</small></td>
                 <td>
-                    {% if borrow.return_date %}
+                    <small>
+                        {% if borrow.return_date %}
                         {{ borrow.return_date }}
-                    {% else %}
+                        {% else %}
                         Pending
-                    {% endif %}
+                        {% endif %}
+                    </small>
                 </td>
-                <td>${{ borrow.fine|floatformat:2 }}</td>
+                <td><small>${{ borrow.fine|floatformat:2 }}</small></td>
             </tr>
             {% endfor %}
         </tbody>

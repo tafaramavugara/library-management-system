@@ -1,0 +1,56 @@
+{% extends 'Librarian/components/main.html' %}
+
+{% block content %}
+{% include 'Librarian/components/sidebar.html' %}
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <!-- Navbar -->
+    {% include 'Librarian/components/navbar.html' %}
+    <!-- End Navbar -->
+    <div class="container-fluid py-2">
+        <div class="row">
+            <div class="col-12">
+                <div class="card mt-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
+                            <h6 class="text-white text-capitalize ps-3">Delete Subject</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p>Are you sure you want to delete the shelf <strong>{{ subject.name }}?</p>
+                        <form method="POST">
+                            {% csrf_token %}
+                            
+                            <!-- Submit Button -->
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-sm btn-warning">
+                                     Delete Subject
+                                </button>
+                                <a href="{% url 'subjects' %}" class="btn btn-sm btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer">
+                        {% if messages %}
+                            {% for message in messages %}
+                                 <div class="alert 
+                                        {% if message.tags == 'debug' %}alert-secondary
+                                        {% elif message.tags == 'info' %}alert-info
+                                        {% elif message.tags == 'success' %}alert-success
+                                        {% elif message.tags == 'warning' %}alert-warning
+                                        {% elif message.tags == 'error' %}alert-danger
+                                        {% else %}alert-primary
+                                        {% endif %} 
+                                        alert-dismissible fade show" role="alert">
+                                            {{ message }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include 'Librarian/components/footer.html' %}
+    </div>
+</main>
+{% endblock %}

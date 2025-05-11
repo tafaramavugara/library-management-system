@@ -87,7 +87,15 @@
                         <td class="text-center">{{ borrow.book.subject.name }}</td>
                         <td class="text-center">{{ borrow.book.shelf.name }}</td>
                         <td class="text-center">
-                          <span class="badge bg-primary text-white">{{ borrow.status|capfirst }}</span>
+                          <span class="badge 
+                            {% if borrow.status == 'borrowed' %} bg-primary 
+                            {% elif borrow.status == 'returned' %} bg-success 
+                            {% elif borrow.status == 'lost' %} bg-danger 
+                            {% elif borrow.status == 'damaged' %} bg-warning text-dark 
+                            {% else %} bg-secondary 
+                            {% endif %}">
+                            {{ borrow.get_status_display }}
+                          </span>
                         </td>
                         <td class="text-center">{{ borrow.borrow_date }}</td>
                         <td class="text-center">
