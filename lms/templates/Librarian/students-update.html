@@ -1,0 +1,70 @@
+{% extends 'Librarian/components/main.html' %}
+
+{% block content %}
+  {% include 'Librarian/components/sidebar.html' %}
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    {% include 'Librarian/components/navbar.html' %}
+    <div class="container-fluid py-2">
+      <div class="row">
+        <div class="col-lg-10">
+          <div class="card mt-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+              <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
+                <h6 class="text-white text-capitalize ps-3">Update Student</h6>
+              </div>
+            </div>
+            <div class="card-body p-3">
+              <form method="POST">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                  <label for="student_id">Student ID</label>
+                  <input type="text" class="form-control" name="student_id" id="student_id" value="{{ student.student_id }}" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="first_name">First Name</label>
+                  <input type="text" class="form-control" name="first_name" id="first_name" value="{{ student.first_name }}" required>
+                </div>
+                <div class="form-group">
+                  <label for="last_name">Last Name</label>
+                  <input type="text" class="form-control" name="last_name" id="last_name" value="{{ student.last_name }}" required>
+                </div>
+                <div class="form-group">
+                  <label for="form">Form</label>
+                  <select class="form-control" name="form" id="form" required>
+                    {% for value, label in student_form_choices %}
+                      <option value="{{ value }}" {% if value == student.form %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" class="form-control" name="email" id="email" value="{{ student.email }}" required>
+                </div>
+                <div class="form-group">
+                  <label for="phone">Phone</label>
+                  <input type="text" class="form-control" name="phone" id="phone" value="{{ student.phone }}" required>
+                </div>
+                <br>
+                <div class="col-6 text-end">
+                  <button class="btn bg-gradient-dark mb-0" type="submit">
+                    <i class="fa fa-save"></i> Save Changes
+                  </button>
+                </div>
+              </form>
+
+              <!-- Display messages -->
+              {% if messages %}
+                <div class="mt-3">
+                  {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+{% endblock %}

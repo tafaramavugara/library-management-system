@@ -1,0 +1,56 @@
+{% extends 'Librarian/components/main.html' %}
+
+{% block content %}
+{% include 'Librarian/components/sidebar.html' %}
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <!-- Navbar -->
+    {% include 'Librarian/components/navbar.html' %}
+    <!-- End Navbar -->
+    <div class="container-fluid py-2">
+        <div class="row">
+            <div class="col-12">
+                <div class="card mt-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
+                            <h6 class="text-white text-capitalize ps-3">Add New Shelf</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <!-- Book Name -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="bookName" class="form-label">Shelf Name</label>
+                                    <input type="text" id="shelf_name" name="shelf_name" class="form-control" placeholder="Enter shelf name" required>
+                                </div>
+
+                                <!-- Book ID -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="bookID" class="form-label">Capacity</label>
+                                    <input type="text" id="shelf_capacity" name="shelf_capacity" class="form-control" placeholder="Enter shelf capacity" required>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="col-6 text-end">
+                                <button type="submit" class="btn bg-gradient-dark mb-0">
+                                     Save Shelf
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer">
+                        {% if auth_message %}
+                            {% for message in auth_message %}
+                                <span>{{ message }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include 'Librarian/components/footer.html' %}
+    </div>
+</main>
+{% endblock %}

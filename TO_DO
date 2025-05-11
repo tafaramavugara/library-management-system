@@ -1,0 +1,29 @@
+ - Librarian Side
+ -- Books
+  -- New (done)
+  -- list (done) (search-left)
+  -- Edit (done)
+  -- Delete (done)
+  -- Borrow (done) (search-left)
+
+ -- Shelves
+  -- New (done)
+  -- list (done) (search-left)
+  -- Edit (done)
+  -- Delete (done)
+
+ -- Billings
+  -- Print
+
+ -- Profile
+  -- Edit
+
+- Student Side
+ -- Books
+  -- Borrow
+
+ -- Billings
+  -- Print
+
+ -- Profile
+  -- Edit

@@ -1,0 +1,39 @@
+<!-- return_book.html -->
+{% extends 'Librarian/components/main.html' %}
+
+{% block content %}
+    {% include 'Librarian/components/sidebar.html' %}
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+        <!-- Navbar -->
+    {% include 'Librarian/components/navbar.html' %}
+    <!-- End Navbar -->
+    <div class="container-fluid py-2">
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <div class="card">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
+                          <h6 class="text-white text-capitalize ps-3">Return Book</h6>
+                        </div>
+                    </div>
+                    <div class="card-body px-0 pb-2">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="fine_type" class="form-label">Select Fine Type</label>
+                                {{ fine_form.fine_type }}
+                            </div>
+                            <div class="col-6 text-end">
+                                <button type="submit" class="btn bg-gradient-dark mb-0">
+                                     Return Book
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'Librarian/components/footer.html' %}
+    </main>
+{% endblock %}

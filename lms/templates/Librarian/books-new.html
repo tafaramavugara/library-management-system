@@ -1,0 +1,85 @@
+{% extends 'Librarian/components/main.html' %}
+
+{% block content %}
+{% include 'Librarian/components/sidebar.html' %}
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <!-- Navbar -->
+    {% include 'Librarian/components/navbar.html' %}
+    <!-- End Navbar -->
+    <div class="container-fluid py-2">
+        <div class="row">
+            <div class="col-12">
+                <div class="card mt-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
+                            <h6 class="text-white text-capitalize ps-3">Add New Book</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" >
+                            {% csrf_token %}
+                            <div class="row">
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="bookName" class="form-label">Book Name</label>
+                                    <input type="text" id="title" name="title" class="form-control" placeholder="Enter book name" required>
+                                </div>
+
+                               
+                                <div class="col-md-6 mb-3">
+                                    <label for="bookID" class="form-label">ISBN</label>
+                                    <input type="text" id="isbn" name="isbn" class="form-control" placeholder="Enter unique isbn" required>
+                                </div>
+
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="subject" class="form-label">Subject</label>
+                                    <select id="subject" name="subject" class="form-select" required>
+                                        <option value="">Select Subject</option>
+                                        {% for subject in subjects %}
+                                            <option value="{{ subject.id }}">{{ subject.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="condition" class="form-label">Book Form</label>
+                                    <select id="form" name="form" class="form-select" required>
+                                        <option value="">Select Form</option>
+                                        {% for choice in book_form_choices %}
+                                            <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="condition" class="form-label">Shelf</label>
+                                    <select id="shelf" name="shelf" class="form-select" required>
+                                        <option value="">Select Shelf</option>
+                                        {% for shelf in shelves %}
+                                            <option value="{{ shelf.id }}">{{ shelf.name }} ({{ shelf.capacity }} capacity)</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="bookID" class="form-label">Price</label>
+                                <input type="number" name="price" step="0.01" min="0" class="form-control" required>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="col-6 text-end">
+                                <button type="submit" class="btn bg-gradient-dark mb-0">
+                                     Save Book
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include 'Librarian/components/footer.html' %}
+    </div>
+</main>
+{% endblock %}

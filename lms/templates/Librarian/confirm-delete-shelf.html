@@ -1,0 +1,38 @@
+{% extends 'Librarian/components/main.html' %}
+
+{% block content %}
+{% include 'Librarian/components/sidebar.html' %}
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <!-- Navbar -->
+    {% include 'Librarian/components/navbar.html' %}
+    <!-- End Navbar -->
+    <div class="container-fluid py-2">
+        <div class="row">
+            <div class="col-12">
+                <div class="card mt-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
+                            <h6 class="text-white text-capitalize ps-3">Add New Shelf</h6>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p>Are you sure you want to delete the shelf <strong>{{ shelf.name }}</strong> with a capacity of {{ shelf.capacity }}?</p>
+                        <form method="POST">
+                            {% csrf_token %}
+                            
+                            <!-- Submit Button -->
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-sm btn-warning">
+                                     Delete Shelf
+                                </button>
+                                <a href="{% url 'shelves' %}" class="btn btn-sm btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include 'Librarian/components/footer.html' %}
+    </div>
+</main>
+{% endblock %}
