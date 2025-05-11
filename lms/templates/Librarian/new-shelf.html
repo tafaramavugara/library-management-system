@@ -41,8 +41,8 @@
                         </form>
                     </div>
                     <div class="card-footer">
-                        {% if auth_message %}
-                            {% for message in auth_message %}
+                        {% if messages %}
+                            {% for message in messages %}
                                 <span>{{ message }}</span>
                             {% endfor %}
                         {% endif %}

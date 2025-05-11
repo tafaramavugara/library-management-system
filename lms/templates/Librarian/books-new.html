@@ -58,7 +58,7 @@
                                     <select id="shelf" name="shelf" class="form-select" required>
                                         <option value="">Select Shelf</option>
                                         {% for shelf in shelves %}
-                                            <option value="{{ shelf.id }}">{{ shelf.name }} ({{ shelf.capacity }} capacity)</option>
+                                            <option value="{{ shelf.id }}">{{ shelf.name }} ({{ shelf.space_left }} capacity)</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -75,6 +75,13 @@
                                 </button>
                             </div>
                         </form>
+                    </div>
+                    <div class="card-footer">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <span>{{ message }}</span>
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -20,6 +20,12 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.timezone import now
 # Create your views here.
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       AUTHENTICATION VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+
 def Login(request):
     if request.method == "POST":
         username = request.POST.get("username")  # Get username from the input name
@@ -39,6 +45,16 @@ def Login(request):
 def Logout(request):
     logout(request)
     return redirect('lib-login')  
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       END AUTHENTICATION VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       DASHBOARD VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='lib-login')
 def Dashboard(request):
@@ -77,6 +93,16 @@ def Dashboard(request):
     }
     return render(request, 'Librarian/dashboard.html', context)
 
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       END DASHBOARD VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       SHELVES VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='lib-login')
 def Shelves(request):
@@ -154,7 +180,7 @@ def EditShelf(request, shelf_id):
             shelf.name = name
             shelf.capacity = int(capacity)
             shelf.save()
-            messages.success(request, "Shelf updated successfully!")
+            messages.success(request, f"{shelf.name} updated successfully!")
             return redirect('shelves')  # Replace 'shelves' with your shelf list URL pattern
     
     context = {
@@ -172,7 +198,7 @@ def DeleteShelf(request, shelf_id):
     # Check if the request method is POST to confirm the deletion
     if request.method == "POST":
         shelf.delete()
-        messages.success(request, "Shelf deleted successfully!")
+        messages.success(request, f"{shelf.name} deleted successfully!")
         return redirect('shelves')  # Redirect to the shelves list page
 
     context = {
@@ -181,8 +207,20 @@ def DeleteShelf(request, shelf_id):
     }
     return render(request, 'Librarian/confirm-delete-shelf.html', context)
 
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       END SHELVES VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       BORROW VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+
 @login_required(login_url='lib-login')
 def NewBorrow(request):
+    books_exist = Book.objects.exists()
     if request.method == 'POST':
         student_id = request.POST.get("student_id")
         book_isbn = request.POST.get("book_isbn")
@@ -234,12 +272,14 @@ def NewBorrow(request):
         'title': 'Borrowing Book',
         'students': students,
         'books': books,
+        'books_exist': books_exist
     }
     return render(request, 'Librarian/books-borrow.html', context)
 
 
 @login_required(login_url='lib-login')
 def BorrowedBooks(request):
+    books_exist = Book.objects.exists()
     q = request.GET.get('q', '').strip()
     subject_query = request.GET.get('subject', '').strip()
 
@@ -261,7 +301,8 @@ def BorrowedBooks(request):
         'title': 'Borrowed Books',
         'borrows': page_obj,
         'subjects': subjects,  # Pass subjects to the template
-        'total' : total
+        'total' : total,
+        'books_exist': books_exist
     }
     return render(request, 'Librarian/books-borrowed.html', context)
 
@@ -340,6 +381,14 @@ def ReturnBookWithFine(request, borrow_id):
         'fine_form': fine_form,
     })
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       END BORROW VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       BOOK VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='lib-login')
 def Books(request):
@@ -349,6 +398,7 @@ def Books(request):
 
     # Base queryset
     books = Book.objects.all().order_by('subject__name')
+    books_exist = Book.objects.exists()
 
     # Apply filters
     if q:
@@ -371,6 +421,7 @@ def Books(request):
     context = {
         'title': 'Books',
         'books': page_obj,
+        'books_exist': books_exist,
         'subjects': subjects,  # Pass subjects for the dropdown
     }
     return render(request, 'Librarian/books-list.html', context)
@@ -410,6 +461,7 @@ def BookHistory(request, book_id):
 
 @login_required(login_url='lib-login')
 def NewBook(request):
+    subjects_exist = Subject.objects.exists()
     if request.method == 'POST':
         isbn = request.POST.get('isbn')
         title = request.POST.get('title')
@@ -426,6 +478,10 @@ def NewBook(request):
         try:
             subject = Subject.objects.get(id=subject_id)
             shelf = Shelf.objects.get(id=shelf_id)
+
+            if shelf.book_set.count() >= shelf.capacity:
+                messages.error(request, f"The shelf '{shelf.name}' is full. Please choose another shelf.")
+                return redirect('lib-new-book')
 
             # Check if the shelf is full through the model's save method
             book = Book(isbn=isbn, title=title, subject=subject, shelf=shelf, form=form, price=price)
@@ -450,6 +506,7 @@ def NewBook(request):
         'title': 'New Book',
         'shelves': shelves,
         'subjects': subjects,
+        'subjects_exist': subjects_exist,
         'book_form_choices': Book.BOOK_FORM_CHOICES,  # Pass the form choices here
     }
     return render(request, 'Librarian/books-new.html', context)
@@ -592,8 +649,14 @@ def billing_pdf(request, student_id):
 
     return response
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       END BOOK VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
 
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       STUDENT VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='lib-login')
 def Students(request):
@@ -764,3 +827,55 @@ def DeleteStudent(request, student_id):
         'student': student,  # Passing the student info to confirm the deletion
     }
     return render(request, 'Librarian/students-delete.html', context)
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       END STUDENT VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       SUBJECTS VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url='lib-login')
+def Subjects(request):
+    # Get search and filter parameters from the request
+    q = request.GET.get('q', '')  # Search by name
+    
+    # Base query for shelves
+    subjects = Subject.objects.filter(
+        Q(name__icontains=q)
+    ).annotate(book_count=Count('book'))
+     # Set up pagination with 10 items per page
+    paginator = Paginator(subjects, 10)  # Show 10 shelves per page
+    page_number = request.GET.get('page')  # Get the page number from the URL query parameters
+    page_obj = paginator.get_page(page_number)  # Get the page object
+
+    context = {
+        'title': 'Subjects',
+        'subjects': page_obj,  # Pass the paginated shelves to the template
+        'current_q': q,  # Preserve the search query in the template
+    }    
+    return render(request, "Librarian/subjects.html", context)
+
+@login_required(login_url='lib-login')
+def NewSubject(request):
+
+    if request.method == "POST":
+        name = request.POST.get("subject_name")
+
+        # Validate inputs
+        if not name:
+            messages.error(request, "Enter subject name!")
+        else:
+            Subject.objects.create(name=name)
+            messages.success(request, f"{name} has been saved!")
+    
+    context = {
+        'title': 'New Subject'
+    }
+    return render(request, 'Librarian/new-subject.html', context)
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+#                                                       END SUBJECTS VIEWS
+# ----------------------------------------------------------------------------------------------------------------------------------------------
