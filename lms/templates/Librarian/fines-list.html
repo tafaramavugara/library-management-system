@@ -76,7 +76,7 @@
                     <td>{{ fine.borrow.book.title|truncatewords:5 }}</td>
                     <td class="text-center">{{ fine.borrow.borrow_date }}</td>
                     <td class="text-center">{{ fine.borrow.due_date }}</td>
-                    <td class="text-center">{{ fine.amount }} TZS</td>
+                    <td class="text-center">${{ fine.amount }}</td>
                     <td class="text-center">
                       {% if fine.status == 'paid' %}
                         <span class="badge bg-success">Paid</span>

@@ -62,6 +62,6 @@ urlpatterns = [
     #                                                       FINES URLS
     # ----------------------------------------------------------------------------------------------------------------------------------------------
     path('fines', FineList, name='lib-fine-list'),
-    path('fines/detail/<str:fine_id/', fine_detail, name='lib-fine-detail'),
-    path('fines/pay/str:fine_id/', PayFine, name='lib-pay-fine'),
+    path('fines/detail/<str:fine_id>/', fine_detail, name='lib-fine-detail'),
+    path('fines/pay/<str:fine_id>/', PayFine, name='lib-pay-fine'),
 ]
