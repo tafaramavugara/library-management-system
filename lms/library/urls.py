@@ -57,6 +57,8 @@ urlpatterns = [
     # ----------------------------------------------------------------------------------------------------------------------------------------------
     path('subjects', Subjects, name='subjects'),
     path('subjects/new', NewSubject, name='new-subject'),
+    path('subject/<str:subject_id>/edit', EditSubject, name='subject-edit'),
+    path('subject/<str:subject_id>/delete', DeleteSubject, name='subject-delete'),
 
     # ----------------------------------------------------------------------------------------------------------------------------------------------
     #                                                       FINES URLS

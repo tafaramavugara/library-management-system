@@ -853,18 +853,19 @@ def DeleteStudent(request, student_id):
 def Subjects(request):
     # Get search and filter parameters from the request
     q = request.GET.get('q', '')  # Search by name
-    
-    # Base query for shelves
+    total_subjects = Subject.objects.all().count()
+    # Base query for subjects
     subjects = Subject.objects.filter(
         Q(name__icontains=q)
     ).annotate(book_count=Count('book')).order_by('name')
      # Set up pagination with 10 items per page
-    paginator = Paginator(subjects, 10)  # Show 10 shelves per page
+    paginator = Paginator(subjects, 10)  # Show 10 subjects per page
     page_number = request.GET.get('page')  # Get the page number from the URL query parameters
     page_obj = paginator.get_page(page_number)  # Get the page object
 
     context = {
         'title': 'Subjects',
+        'total_subjects':total_subjects,
         'subjects': page_obj,  # Pass the paginated shelves to the template
         'current_q': q,  # Preserve the search query in the template
     }    
@@ -928,13 +929,13 @@ def DeleteSubject(request, subject_id):
     if request.method == "POST":
         subject.delete()
         messages.success(request, f"{subject.name} deleted successfully!")
-        return redirect('shelves')  # Redirect to the shelves list page
+        return redirect('subjects')  # Redirect to the shelves list page
 
     context = {
         'title': 'Delete Subject',
         'subject': subject
     }
-    return render(request, 'Librarian/confirm-delete-subject.html', context)
+    return render(request, 'Librarian/delete-subject.html', context)
 
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------

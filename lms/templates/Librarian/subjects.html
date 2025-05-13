@@ -67,8 +67,8 @@
                                 <td class="text-center">{{ subject.name | capfirst }}</td>
                                 <td class="text-center">{{ subject.book_count }}</td>
                                 <td>
-                                    <a href="" class="btn btn-sm btn-primary">Edit</a>
-                                    <a href="" class="btn btn-sm btn-danger">Delete</a>
+                                    <a href="{% url 'subject-edit' subject.id %}" class="btn btn-sm btn-primary">Edit</a>
+                                    <a href="{% url 'subject-delete' subject.id %}" class="btn btn-sm btn-danger">Delete</a>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -80,6 +80,7 @@
               
             </div>
             <div class="card-footer">
+              <span class='justify-content-left'>Total: {{total_subjects}} subjects<span>
               <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
                     <!-- Display current page number -->
