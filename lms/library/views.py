@@ -472,14 +472,16 @@ def NewBook(request):
     subjects_exist = Subject.objects.exists()
     if request.method == 'POST':
         isbn = request.POST.get('isbn')
+        author = request.POST.get('author')
         title = request.POST.get('title')
+        publication_date = request.POST.get('publication_date')
         subject_id = request.POST.get('subject')
         shelf_id = request.POST.get('shelf')
         form = request.POST.get('form')
         price = request.POST.get('price')
 
         # Validate inputs
-        if not isbn or not title or not subject_id or not shelf_id or not form or not price:
+        if not isbn or not title or not author or not publication_date or not subject_id or not shelf_id or not form or not price:
             messages.error(request, "All fields are required!")
         elif Book.objects.filter(isbn=isbn).exists():
             messages.error(request, f'A book with this ISBN: {isbn}, already exists!')
@@ -494,7 +496,7 @@ def NewBook(request):
                 return redirect('lib-new-book')
 
             # Check if the shelf is full through the model's save method
-            book = Book(isbn=isbn, title=title, subject=subject, shelf=shelf, form=form, price=price)
+            book = Book(isbn=isbn, title=title,author=author,publication_date=publication_date, subject=subject, shelf=shelf, form=form, price=price)
             book.save()  # This will trigger the save method which checks shelf capacity
 
             messages.success(request, f"Book '{title}' added successfully!")
@@ -529,13 +531,15 @@ def EditBook(request, book_id):
 
     if request.method == 'POST':
         isbn = request.POST.get('isbn')
+        author = request.POST.get('author')
         title = request.POST.get('title')
+        publication_date = request.POST.get('publication_date')
         subject_id = request.POST.get('subject')
         shelf_id = request.POST.get('shelf')
         form = request.POST.get('form')
 
         # Validate inputs
-        if not isbn or not title or not subject_id or not shelf_id or not form:
+        if not isbn or not title or not author or not publication_date or not subject_id or not shelf_id or not form:
             messages.error(request, "All fields are required!")
         elif Book.objects.filter(isbn=isbn).exists():
             messages.error(request, f'A book with this ISBN: {isbn}, already exists!')
@@ -549,6 +553,8 @@ def EditBook(request, book_id):
             # Update the book object with the new values
             book.isbn = isbn
             book.title = title
+            book.author = author
+            book.publication_date = publication_date
             book.subject = subject
             book.shelf = shelf
             book.form = form
