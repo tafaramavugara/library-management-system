@@ -7,14 +7,26 @@ from django.contrib.auth.models import User
 
 
 class Subject(models.Model):
+    SUBJECT_LEVEL_CHOICES = [
+        ('ordinary level','Ordinary level'),
+        ('advanced level','Advanced level')
+    ]
     name = models.CharField(max_length=200, unique=True)
+    level = models.CharField(max_length=18, choices=SUBJECT_LEVEL_CHOICES)
 
     def __str__(self):
-        return self.name
+        return f"{self.level}: {self.name}"
     
 class Shelf(models.Model):
+    SHELF_LEVEL_CHOICES = [
+        ('ordinary level','Ordinary level'),
+        ('advanced level','Advanced level')
+    ]
     name = models.CharField(max_length=200, unique=True)
     capacity = models.IntegerField()
+    level = models.CharField(max_length=18, choices=SHELF_LEVEL_CHOICES)
+
+   
 
     def __str__(self):
         return self.name
@@ -36,7 +48,9 @@ class Book(models.Model):
         ('6','6'),
     ]
     isbn = models.CharField(max_length=13, unique=True)
+    author = models.CharField(max_length=200)
     title = models.CharField(max_length=200)
+    publication_date = models.DateField()
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     shelf = models.ForeignKey(Shelf, on_delete=models.CASCADE)
     form = models.CharField(max_length=1, choices=BOOK_FORM_CHOICES)  # Corrected this line
