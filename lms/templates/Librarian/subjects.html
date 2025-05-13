@@ -52,7 +52,7 @@
                     <table class="table table-striped table-bordered align-items-center mb-0">
                         <thead class="thead-dark">
                             <tr>
-                                <th scope="col"  class="text-center">Subject ID</th>
+                                {% comment %} <th scope="col"  class="text-center">Subject ID</th> {% endcomment %}
                                 <th scope="col"  class="text-center">Name</th>
                                 <th scope="col" class="text-center">Total Books</th>
                                 <th scope="col">Actions</th>
@@ -61,10 +61,10 @@
                         <tbody>
                             {% for subject in subjects %}
                             <tr>
-                                <td class="text-center">
+                                {% comment %} <td class="text-center">
                                     {{subject.id}}
-                                </td>
-                                <td class="text-center">{{ subject.name }}</td>
+                                </td> {% endcomment %}
+                                <td class="text-center">{{ subject.name | capfirst }}</td>
                                 <td class="text-center">{{ subject.book_count }}</td>
                                 <td>
                                     <a href="" class="btn btn-sm btn-primary">Edit</a>

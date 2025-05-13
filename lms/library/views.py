@@ -116,7 +116,7 @@ def Shelves(request):
     ).annotate(
         book_count=Count('book'),
         space_left=F('capacity') - Count('book')
-    )
+    ).order_by('id')
 
     # Apply space filter
     if space_filter == 'available':
@@ -149,10 +149,12 @@ def NewShelf(request):
             messages.error(request, "All fields are required!")
         elif not capacity.isdigit() or int(capacity) <= 0:
             messages.error(request, "Capacity must be a positive number!")
+        elif Shelf.objects.filter(name=name).exists():
+            messages.error(request, f"{name} shelf already exist!")
         else:
             # Save the new shelf
             Shelf.objects.create(name=name, capacity=int(capacity))
-            messages.success(request, "New shelf added successfully!")
+            messages.success(request, f"{name} shelf added successfully!")
             return redirect('new-shelf')  # Replace 'shelf-list' with the name of your shelf list URL pattern
        
     context = {
@@ -167,7 +169,7 @@ def EditShelf(request, shelf_id):
     shelf = get_object_or_404(Shelf, id=shelf_id)
     
     if request.method == "POST":
-        name = request.POST.get("shelf_name")
+        name = request.POST.get("shelf_name").lower()
         capacity = request.POST.get("shelf_capacity")
         
         # Validate inputs
@@ -175,6 +177,8 @@ def EditShelf(request, shelf_id):
             messages.error(request, "All fields are required!")
         elif not capacity.isdigit() or int(capacity) <= 0:
             messages.error(request, "Capacity must be a positive number!")
+        elif Shelf.objects.filter(name=name).exists():
+            messages.error(request, f"{name} shelf already exist!")
         else:
             # Update the shelf details
             shelf.name = name
@@ -473,6 +477,8 @@ def NewBook(request):
         # Validate inputs
         if not isbn or not title or not subject_id or not shelf_id or not form or not price:
             messages.error(request, "All fields are required!")
+        elif Book.objects.filter(isbn=isbn).exists():
+            messages.error(request, f'A book with this ISBN: {isbn}, already exists!')
             return redirect('lib-new-book')  # Redirect back to the same page
 
         try:
@@ -527,6 +533,8 @@ def EditBook(request, book_id):
         # Validate inputs
         if not isbn or not title or not subject_id or not shelf_id or not form:
             messages.error(request, "All fields are required!")
+        elif Book.objects.filter(isbn=isbn).exists():
+            messages.error(request, f'A book with this ISBN: {isbn}, already exists!')
             return redirect('lib-edit-book', book_id=book.id)  # Redirect back to the edit page
 
         try:
@@ -705,6 +713,8 @@ def NewStudent(request):
         # Validate inputs: Ensure all fields are provided
         if not student_id or not first_name or not last_name or not form or not email or not phone:
             messages.error(request, "All fields are required!")
+        elif Subject.objects.filter(student_id=student_id).exists():
+            messages.error(request, f'Student ID:{student_id}, already exists!')
             return redirect('lib-new-student')  # Redirect to the same page with an error message
 
         try:
@@ -754,6 +764,8 @@ def UpdateStudent(request, student_id):
         # Validate inputs: Ensure all fields are provided
         if not first_name or not last_name or not form or not email or not phone:
             messages.error(request, "All fields are required!")
+        elif Subject.objects.filter(student_id=student_id).exists():
+            messages.error(request, f'Student ID:{student_id}, already exists!')
             return redirect('lib-update-student', student_id=student_id)  # Redirect back to the update page
 
         try:
@@ -845,7 +857,7 @@ def Subjects(request):
     # Base query for shelves
     subjects = Subject.objects.filter(
         Q(name__icontains=q)
-    ).annotate(book_count=Count('book'))
+    ).annotate(book_count=Count('book')).order_by('name')
      # Set up pagination with 10 items per page
     paginator = Paginator(subjects, 10)  # Show 10 shelves per page
     page_number = request.GET.get('page')  # Get the page number from the URL query parameters
@@ -862,11 +874,13 @@ def Subjects(request):
 def NewSubject(request):
 
     if request.method == "POST":
-        name = request.POST.get("subject_name")
+        name = request.POST.get("subject_name").lower()
 
         # Validate inputs
         if not name:
             messages.error(request, "Enter subject name!")
+        elif Subject.objects.filter(name=name).exists():
+            messages.error(request, f"A subject with the name {name} already exists!")
         else:
             Subject.objects.create(name=name)
             messages.success(request, f"{name} has been saved!")
@@ -889,6 +903,8 @@ def EditSubject(request, subject_id):
         # Validate inputs
         if not name:
             messages.error(request, "All fields are required!")
+        elif Subject.objects.filter(name=name).exists():
+            messages.error(request, f"A subject with the name {name} already exists!")
         else:
             # Update the shelf details
             subject.name = name
