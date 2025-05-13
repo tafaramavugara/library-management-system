@@ -109,6 +109,7 @@ def Shelves(request):
     # Get search and filter parameters from the request
     q = request.GET.get('q', '')  # Search by name
     space_filter = request.GET.get('space_filter', 'all')  # Filter for available space
+    total_shelves = Shelf.objects.all().count()
 
     # Base query for shelves
     shelves = Shelf.objects.filter(
@@ -131,6 +132,7 @@ def Shelves(request):
 
     context = {
         'title': 'Shelves',
+        'total_shelves':total_shelves,
         'shelves': page_obj,  # Pass the paginated shelves to the template
         'current_q': q,  # Preserve the search query in the template
         'current_space_filter': space_filter,  # Preserve the filter value in the template
@@ -403,6 +405,7 @@ def Books(request):
     # Base queryset
     books = Book.objects.all().order_by('subject__name')
     books_exist = Book.objects.exists()
+    total_books = Book.objects.all().count()
 
     # Apply filters
     if q:
@@ -425,6 +428,7 @@ def Books(request):
     context = {
         'title': 'Books',
         'books': page_obj,
+        'total_books':total_books,
         'books_exist': books_exist,
         'subjects': subjects,  # Pass subjects for the dropdown
     }
@@ -674,6 +678,7 @@ def Students(request):
 
     # Base queryset
     students = Student.objects.all().order_by('student_id')
+    total_students = Student.objects.all().count()
 
     # Apply filters
     if q:
@@ -693,6 +698,7 @@ def Students(request):
     context = {
         'title': 'Books',
         'books': page_obj,
+        'total_students':total_students,
         'students': students,  # Pass subjects for the dropdown
         'forms':form_choices
     }
@@ -706,12 +712,13 @@ def NewStudent(request):
         student_id = request.POST.get('student_id')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
+        gender = request.POST.get('gender')
         form = request.POST.get('form')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
 
         # Validate inputs: Ensure all fields are provided
-        if not student_id or not first_name or not last_name or not form or not email or not phone:
+        if not student_id or not first_name or not last_name or not gender or not form or not email or not phone:
             messages.error(request, "All fields are required!")
         elif Subject.objects.filter(student_id=student_id).exists():
             messages.error(request, f'Student ID:{student_id}, already exists!')
@@ -727,7 +734,7 @@ def NewStudent(request):
 
             # Create and save a new student
             student = Student(student_id=student_id, first_name=first_name, last_name=last_name, 
-                              email=email, phone=phone, form=form)
+                              email=email, phone=phone, form=form, gender=gender)
             student.save()  # Save the new student
 
             messages.success(request, f"Student '{first_name} {last_name}' added successfully!")
@@ -757,12 +764,13 @@ def UpdateStudent(request, student_id):
         # Fetching updated data from the POST request
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
+        gender = request.POST.get('gender')
         form = request.POST.get('form')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
 
         # Validate inputs: Ensure all fields are provided
-        if not first_name or not last_name or not form or not email or not phone:
+        if not first_name or not last_name or not gender or not form or not email or not phone:
             messages.error(request, "All fields are required!")
         elif Subject.objects.filter(student_id=student_id).exists():
             messages.error(request, f'Student ID:{student_id}, already exists!')
@@ -772,6 +780,7 @@ def UpdateStudent(request, student_id):
             # Update the student's data
             student.first_name = first_name
             student.last_name = last_name
+            student.gender = gender
             student.form = form
             student.email = email
             student.phone = phone
@@ -951,7 +960,7 @@ def DeleteSubject(request, subject_id):
 def FineList(request):
     q = request.GET.get('q', '').strip()  # Search by student ID or name
     status_filter = request.GET.get('status', 'all')  # Filter by fine status
-
+    total_fines = Fine.objects.all().count()
     # Base queryset
     fines = Fine.objects.select_related('borrow__student', 'borrow__book')
 
@@ -976,6 +985,7 @@ def FineList(request):
     context = {
         'title': 'Fines List',
         'fines': page_obj,
+        'total_fines':total_fines,
         'current_q': q,
         'current_status_filter': status_filter,
     }

@@ -79,9 +79,15 @@ class Student(models.Model):
         ('6A','6A'),
     ]
 
+    STUDENT_GENDER_CHOICES = [
+        ('female', 'Female'),
+        ('male', 'Male')
+    ]
+
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     student_id = models.CharField(max_length=20, unique=True)
+    gender = models.CharField(max_length=7, choices=STUDENT_GENDER_CHOICES, default='Male')
     form = models.CharField(max_length=2, choices=STUDENT_FORM_CHOICES)
     email = models.EmailField()
     phone = models.CharField(max_length=15)
