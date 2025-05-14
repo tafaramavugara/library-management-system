@@ -143,24 +143,26 @@ def Shelves(request):
 @login_required(login_url='lib-login')
 def NewShelf(request):
     if request.method == "POST":
-        name = request.POST.get("shelf_name")  
+        name = request.POST.get("shelf_name")
+        level = request.POST.get("shelf_level")  
         capacity = request.POST.get("shelf_capacity")
 
         # Validate inputs
-        if not name or not capacity:
+        if not name or not level or not capacity:
             messages.error(request, "All fields are required!")
         elif not capacity.isdigit() or int(capacity) <= 0:
             messages.error(request, "Capacity must be a positive number!")
-        elif Shelf.objects.filter(name=name).exists():
+        elif Shelf.objects.filter(name=name, level=level).exists():
             messages.error(request, f"{name} shelf already exist!")
         else:
             # Save the new shelf
-            Shelf.objects.create(name=name, capacity=int(capacity))
+            Shelf.objects.create(name=name, level=level, capacity=int(capacity))
             messages.success(request, f"{name} shelf added successfully!")
             return redirect('new-shelf')  # Replace 'shelf-list' with the name of your shelf list URL pattern
        
     context = {
-        'title':'New Shelf'
+        'title':'New Shelf',
+        'shelf_level_choices': Shelf.SHELF_LEVEL_CHOICES
     }
     return render(request, 'Librarian/new-shelf.html', context)
 
@@ -868,10 +870,12 @@ def DeleteStudent(request, student_id):
 def Subjects(request):
     # Get search and filter parameters from the request
     q = request.GET.get('q', '')  # Search by name
+    subject_level = request.GET.get('subject_level', '') #search by level
     total_subjects = Subject.objects.all().count()
     # Base query for subjects
     subjects = Subject.objects.filter(
-        Q(name__icontains=q)
+        Q(name__icontains=q),
+        Q(level__icontains=subject_level)
     ).annotate(book_count=Count('book')).order_by('name')
      # Set up pagination with 10 items per page
     paginator = Paginator(subjects, 10)  # Show 10 subjects per page
@@ -880,6 +884,7 @@ def Subjects(request):
 
     context = {
         'title': 'Subjects',
+        'subject_level_choices': Subject.SUBJECT_LEVEL_CHOICES,
         'total_subjects':total_subjects,
         'subjects': page_obj,  # Pass the paginated shelves to the template
         'current_q': q,  # Preserve the search query in the template
@@ -891,18 +896,20 @@ def NewSubject(request):
 
     if request.method == "POST":
         name = request.POST.get("subject_name").lower()
+        level = request.POST.get('subject_level')
 
         # Validate inputs
-        if not name:
-            messages.error(request, "Enter subject name!")
-        elif Subject.objects.filter(name=name).exists():
-            messages.error(request, f"A subject with the name {name} already exists!")
+        if not name or not level:
+            messages.error(request, "Enter all fields!")
+        elif Subject.objects.filter(name=name, level=level).exists():
+            messages.error(request, f"{level} -{name}  already exists!")
         else:
-            Subject.objects.create(name=name)
-            messages.success(request, f"{name} has been saved!")
+            Subject.objects.create(name=name, level=level)
+            messages.success(request, f"{level} - {name} has been saved!")
     
     context = {
-        'title': 'New Subject'
+        'title': 'New Subject',
+        'subject_level_choices': Subject.SUBJECT_LEVEL_CHOICES
     }
     return render(request, 'Librarian/new-subject.html', context)
 

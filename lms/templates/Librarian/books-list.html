@@ -67,7 +67,7 @@
                         <th scope="col">Book ID</th>
                         <th scope="col">Name</th>
                         <th scope="col" class="text-center">Subject</th>
-                        <th scope="col" class="text-center">Shelf No</th>
+                        <th scope="col" class="text-center">Shelf</th>
                         <th scope="col" class="text-center">Status</th>
                         <th scope="col" class="text-center">Class</th>
                         <th scope="col">Actions</th>
@@ -84,7 +84,7 @@
                           </div>
                         </td>
                         <td>{{book.title|truncatewords:5}}</td>
-                        <td class="text-center">{{ book.subject}}</td>
+                        <td class="text-center">{{ book.subject|capfirst}}</td>
                         <td class="text-center">{{book.shelf.name}}</td>
                         <td class="text-center">
                           {% if book.is_borrowed %}

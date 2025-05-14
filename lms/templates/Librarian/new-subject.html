@@ -25,6 +25,16 @@
                                     <input type="text" id="subject_name" name="subject_name" class="form-control" placeholder="Enter subject name" required>
                                 </div>
 
+                                <div class="col-md-6 mb-3">
+                                    <label for="condition" class="form-label">Subject Level</label>
+                                    <select id="subject_level" name="subject_level" class="form-select" required>
+                                        <option value="">Select Level</option>
+                                        {% for choice in subject_level_choices %}
+                                            <option value="{{ choice.0 }}">{{ choice.1 | capfirst }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
                                
                             </div>
 

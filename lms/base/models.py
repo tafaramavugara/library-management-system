@@ -11,7 +11,7 @@ class Subject(models.Model):
         ('ordinary level','Ordinary level'),
         ('advanced level','Advanced level')
     ]
-    name = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=200)
     level = models.CharField(max_length=18, choices=SUBJECT_LEVEL_CHOICES)
 
     def __str__(self):
@@ -22,7 +22,7 @@ class Shelf(models.Model):
         ('ordinary level','Ordinary level'),
         ('advanced level','Advanced level')
     ]
-    name = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=200)
     capacity = models.IntegerField()
     level = models.CharField(max_length=18, choices=SHELF_LEVEL_CHOICES)
 

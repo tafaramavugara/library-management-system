@@ -60,7 +60,7 @@
                         <h6 class="ps-3"> {{total_shelves}} Shelves</h6>
                         <thead class="thead-dark">
                             <tr>
-                                <th scope="col"  class="text-center">Shelf ID</th>
+                                <th scope="col" class="text-center">Level</th>
                                 <th scope="col"  class="text-center">Name</th>
                                 <th scope="col" class="text-center">Capacity</th>
                                 <th scope="col" class="text-center">Space</th>
@@ -71,9 +71,7 @@
                         <tbody>
                             {% for shelf in shelves %}
                             <tr>
-                                <td class="text-center">
-                                    {{shelf.id}}
-                                </td>
+                                <td class="text-center">{{ shelf.level | capfirst }}</td>
                                 <td class="text-center">{{ shelf.name }}</td>
                                 <td class="text-center">{{ shelf.capacity }}</td>
                                 <td class="text-center">

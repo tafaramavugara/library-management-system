@@ -23,7 +23,16 @@
                         <label for="filterName" class="form-label">Name</label>
                         <input type="text" class="form-control" name="q" placeholder="Enter subject name">
                       </div>
-                      
+                       <div class="col-md-6 mb-3">
+                          <label for="condition" class="form-label">Subject Level</label>
+                          <select id="subject_level" name="subject_level" class="form-select" required>
+                            <option value="">Select Level</option>
+                            {% for choice in subject_level_choices %}
+                              <option value="{{ choice.0 }}">{{ choice.1 | capfirst }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                    
                     </div>
                     <div class="col-6 text-end">
                       <button class="btn bg-gradient-dark mb-0" type="submit" form="filterForm">
@@ -53,7 +62,7 @@
                         <h6 class="ps-3"> {{total_subjects}} Subjects</h6>
                         <thead class="thead-dark">
                             <tr>
-                                {% comment %} <th scope="col"  class="text-center">Subject ID</th> {% endcomment %}
+                                <th scope="col"  class="text-center">Subject Level</th>
                                 <th scope="col"  class="text-center">Name</th>
                                 <th scope="col" class="text-center">Total Books</th>
                                 <th scope="col">Actions</th>
@@ -62,9 +71,9 @@
                         <tbody>
                             {% for subject in subjects %}
                             <tr>
-                                {% comment %} <td class="text-center">
-                                    {{subject.id}}
-                                </td> {% endcomment %}
+                                <td class="text-center">
+                                    {{subject.level | capfirst}}
+                                </td>
                                 <td class="text-center">{{ subject.name | capfirst }}</td>
                                 <td class="text-center">{{ subject.book_count }}</td>
                                 <td>
