@@ -148,7 +148,7 @@ def NewShelf(request):
         capacity = request.POST.get("shelf_capacity")
 
         # Validate inputs
-        if not name or not level or not capacity:
+        if not all([name,level,capacity]):
             messages.error(request, "All fields are required!")
         elif not capacity.isdigit() or int(capacity) <= 0:
             messages.error(request, "Capacity must be a positive number!")
@@ -328,12 +328,12 @@ def ReturnBook(request, borrow_id):
 
     return redirect('lib-books-borrowed')  # Adjust to your appropriate URL pattern
 
+
 @login_required(login_url='lib-login')
 def ReturnBookWithFine(request, borrow_id):
     borrow = get_object_or_404(Borrow, id=borrow_id)
     fine_form = FineSelectionForm(request.POST or None)
 
-    # Check if the book is borrowed or already returned
     if borrow.status == 'returned':
         messages.error(request, 'This book has already been returned.')
         return redirect('lib-books-borrowed')
@@ -341,47 +341,29 @@ def ReturnBookWithFine(request, borrow_id):
     if request.method == 'POST' and fine_form.is_valid():
         fine_type = fine_form.cleaned_data['fine_type']
 
-        # Calculate the fine based on the borrow status
+        if fine_type not in ['overdue', 'lost', 'damaged']:
+            messages.error(request, 'Invalid fine type selected.')
+            return redirect('lib-books-borrowed')
+
         fine_amount, fine_reason = borrow.calculate_fine()
+        fine_reason = fine_reason or "No reason specified"
 
-        # Ensure a valid reason is provided
-        if not fine_reason:
-            fine_reason = "No reason specified"
-
-        # Update the borrow status and return date based on the fine type
-        if fine_type == 'overdue':
-            borrow.status = 'returned'
-            borrow.return_date = date.today()
-        
-        elif fine_type == 'lost':
-            borrow.status = 'lost'
-            borrow.return_date = date.today()
-
-        elif fine_type == 'damaged':
-            borrow.status = 'damaged'
-            borrow.return_date = date.today()
-
-        # Save the borrow object with updated status and return date
+        borrow.status = fine_type
+        borrow.return_date = date.today()
         borrow.save()
 
-        # Check if a fine record exists for the borrow
-        fine = Fine.objects.filter(borrow=borrow, reason=fine_reason).first()
+        fine, created = Fine.objects.get_or_create(
+            borrow=borrow,
+            reason=fine_reason,
+            defaults={'amount': fine_amount, 'status': 'unpaid'}
+        )
 
-        if fine:
-            # Update the fine amount and status if the fine already exists
+        if not created:
             fine.amount = fine_amount
-            fine.status = 'unpaid'  # Mark the fine as unpaid when updating
+            fine.status = 'unpaid'
             fine.save()
-        else:
-            # If no fine exists, create a new one
-            Fine.objects.create(
-                borrow=borrow,
-                amount=fine_amount,
-                reason=fine_reason,
-                status='unpaid'
-            )
 
-        messages.success(request, f'Book has been returned and {fine_type} fine applied successfully.')
+        messages.success(request, f'Book has been returned and "{fine_type}" fine applied successfully.')
         return redirect('lib-books-borrowed')
 
     return render(request, 'Librarian/return_book.html', {
@@ -483,7 +465,7 @@ def NewBook(request):
         price = request.POST.get('price')
 
         # Validate inputs
-        if not isbn or not title or not author or not publication_date or not subject_id or not shelf_id or not form or not price:
+        if not all([isbn,author,title,publication_date,subject_id,shelf_id,form,price]):
             messages.error(request, "All fields are required!")
         elif Book.objects.filter(isbn=isbn).exists():
             messages.error(request, f'A book with this ISBN: {isbn}, already exists!')
@@ -541,7 +523,7 @@ def EditBook(request, book_id):
         form = request.POST.get('form')
 
         # Validate inputs
-        if not isbn or not title or not author or not publication_date or not subject_id or not shelf_id or not form:
+        if not all([isbn,author,title,publication_date,subject_id,shelf_id,form]):
             messages.error(request, "All fields are required!")
         elif Book.objects.filter(isbn=isbn).exists():
             messages.error(request, f'A book with this ISBN: {isbn}, already exists!')
@@ -726,10 +708,8 @@ def NewStudent(request):
         phone = request.POST.get('phone')
 
         # Validate inputs: Ensure all fields are provided
-        if not student_id or not first_name or not last_name or not gender or not form or not email or not phone:
+        if not all([student_id,first_name,last_name,gender,form,email,phone]):
             messages.error(request, "All fields are required!")
-        elif Subject.objects.filter(student_id=student_id).exists():
-            messages.error(request, f'Student ID:{student_id}, already exists!')
             return redirect('lib-new-student')  # Redirect to the same page with an error message
 
         try:
@@ -779,7 +759,7 @@ def UpdateStudent(request, student_id):
         phone = request.POST.get('phone')
 
         # Validate inputs: Ensure all fields are provided
-        if not first_name or not last_name or not gender or not form or not email or not phone:
+        if not all([first_name,last_name,gender,form,email,phone]):
             messages.error(request, "All fields are required!")
         elif Subject.objects.filter(student_id=student_id).exists():
             messages.error(request, f'Student ID:{student_id}, already exists!')

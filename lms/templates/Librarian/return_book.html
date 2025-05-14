@@ -19,9 +19,14 @@
                     <div class="card-body px-0 pb-2">
                         <form method="POST">
                             {% csrf_token %}
-                            <div class="mb-3">
-                                <label for="fine_type" class="form-label">Select Fine Type</label>
-                                {{ fine_form.fine_type }}
+                            <div class="col-md-6 mb-3">
+                                <label for="fine_type" class="form-label">Select Fine Type</label>g
+                                  <select id="fine_type" name="fine_type" class="form-select" required>
+                                        <option value="">Select Fine</option>
+                                        {% for value, label in fine_form.fields.fine_type.choices %}
+                                        <option value="{{ value }}">{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
                             </div>
                             <div class="col-6 text-end">
                                 <button type="submit" class="btn bg-gradient-dark mb-0">
