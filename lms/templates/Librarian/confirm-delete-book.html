@@ -16,7 +16,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <p>Are you sure you want to delete the book <strong>{{ book.title }}</strong> with isbn {{ book.isbn }}?</p>
+                        <p>Are you sure you want to delete the book <strong>{{ book.title|title }}</strong> with isbn {{ book.isbn }}?</p>
                         <form method="POST">
                             {% csrf_token %}
                             

@@ -62,6 +62,7 @@
                     <thead class="thead-dark">
                       <tr>
                         <th scope="col" class="text-center">Student ID</th>
+                        <th scope="col" class="text-center">Gender</th>
                         <th scope="col" class="text-center">Name</th>
                         <th scope="col" class="text-center">Form</th>
                         <th scope="col" class="text-center">Contact</th>
@@ -72,7 +73,8 @@
                       {% for student in students %}
                       <tr>
                         <td class="text-center">{{ student.student_id }}</td>
-                        <td class="text-center">{{ student.first_name }} {{ student.last_name }}</td>
+                        <td class="text-center">{{ student.gender|title }}</td>
+                        <td class="text-center">{{ student.first_name|title }} {{ student.last_name|title }}</td>
                         <td class="text-center">{{ student.form }}</td>
                         <td class="text-center">{{student.phone}}</td>
                         <td class="text-center">

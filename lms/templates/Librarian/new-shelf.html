@@ -30,7 +30,7 @@
                                     <select id="shelf_level" name="shelf_level" class="form-select" required>
                                         <option value="">Select Level</option>
                                         {% for choice in shelf_level_choices %}
-                                            <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                            <option value="{{ choice.0 }}">{{ choice.1|title }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>

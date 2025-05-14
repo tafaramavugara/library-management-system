@@ -16,7 +16,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <p>Are you sure you want to delete the shelf <strong>{{ shelf.name }}</strong> with a capacity of {{ shelf.capacity }}?</p>
+                        <p>Are you sure you want to delete the shelf <strong>{{ shelf.name|title }}</strong> with a capacity of {{ shelf.capacity }}?</p>
                         <form method="POST">
                             {% csrf_token %}
                             

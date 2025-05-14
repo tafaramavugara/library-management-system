@@ -60,6 +60,7 @@
                 <thead class="thead-dark">
                   <tr>
                     <th scope="col">Student</th>
+                    <th scope="col">Subject</th>
                     <th scope="col">Book</th>
                     <th scope="col" class="text-center">Borrowed On</th>
                     <th scope="col" class="text-center">Due Date</th>
@@ -72,8 +73,9 @@
                   {% for fine in fines %}
                   <tr>
                     <td>
-                      {{ fine.borrow.student.first_name }} {{ fine.borrow.student.last_name }}<br>
+                      {{ fine.borrow.student.first_name|title }} {{ fine.borrow.student.last_name|title }}<br>
                     </td>
+                     <td>{{ fine.borrow.book.subject|title }}</td>
                     <td>{{ fine.borrow.book.title|truncatewords:5 }}</td>
                     <td class="text-center">{{ fine.borrow.borrow_date }}</td>
                     <td class="text-center">{{ fine.borrow.due_date }}</td>

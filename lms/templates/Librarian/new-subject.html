@@ -30,7 +30,7 @@
                                     <select id="subject_level" name="subject_level" class="form-select" required>
                                         <option value="">Select Level</option>
                                         {% for choice in subject_level_choices %}
-                                            <option value="{{ choice.0 }}">{{ choice.1 | capfirst }}</option>
+                                            <option value="{{ choice.0 }}">{{ choice.1 |title }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>

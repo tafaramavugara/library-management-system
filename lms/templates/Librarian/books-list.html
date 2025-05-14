@@ -29,7 +29,7 @@
                                 <option value="" {% if not request.GET.subject %}selected{% endif %}>All Subjects</option>
                                 {% for subject in subjects %}
                                 <option value="{{ subject.id }}" {% if request.GET.subject == subject.id|stringformat:"s" %}selected{% endif %}>
-                                    {{ subject.name }}
+                                    {{subject.level|title}} - {{ subject.name|title }}
                                 </option>
                                 {% endfor %}
                             </select>
@@ -69,7 +69,7 @@
                         <th scope="col" class="text-center">Subject</th>
                         <th scope="col" class="text-center">Shelf</th>
                         <th scope="col" class="text-center">Status</th>
-                        <th scope="col" class="text-center">Class</th>
+                        <th scope="col" class="text-center">Form</th>
                         <th scope="col">Actions</th>
                       </tr>
                     </thead>
@@ -84,8 +84,8 @@
                           </div>
                         </td>
                         <td>{{book.title|truncatewords:5}}</td>
-                        <td class="text-center">{{ book.subject|capfirst}}</td>
-                        <td class="text-center">{{book.shelf.name}}</td>
+                        <td class="text-center">{{ book.subject|title}}</td>
+                        <td class="text-center">{{book.shelf.name|title}}</td>
                         <td class="text-center">
                           {% if book.is_borrowed %}
                             <!-- If the book has been borrowed -->

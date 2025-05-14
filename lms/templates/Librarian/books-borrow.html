@@ -35,7 +35,7 @@
                                     <select name="book_isbn" class="form-control" required>
                                         <option value="">Select Book</option>
                                         {% for book in books %}
-                                          <option value="{{ book.isbn }}">{{ book.title }} - {{ book.isbn }}</option> 
+                                          <option value="{{ book.isbn }}">{{ book.title|title }} - {{ book.isbn }}</option> 
                                         {% endfor %}
                                       </select>
                                 </div>

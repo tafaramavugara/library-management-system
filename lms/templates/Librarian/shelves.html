@@ -71,8 +71,8 @@
                         <tbody>
                             {% for shelf in shelves %}
                             <tr>
-                                <td class="text-center">{{ shelf.level | capfirst }}</td>
-                                <td class="text-center">{{ shelf.name }}</td>
+                                <td class="text-center">{{ shelf.level | title }}</td>
+                                <td class="text-center">{{ shelf.name | title }}</td>
                                 <td class="text-center">{{ shelf.capacity }}</td>
                                 <td class="text-center">
                                     {% if shelf.space_left > 0 %}

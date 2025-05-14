@@ -16,7 +16,7 @@
             <h6 class="mb-3">Student Information</h6>
             <ul class="list-group mb-3">
               <li class="list-group-item">
-                <strong>Name:</strong> {{ fine.borrow.student.full_name }}
+                <strong>Name:</strong> {{ fine.borrow.student.full_name|title }}
               </li>
               <li class="list-group-item">
                 <strong>Student ID:</strong> {{ fine.borrow.student.student_id }}
@@ -29,13 +29,16 @@
             <h6 class="mb-3">Book Information</h6>
             <ul class="list-group mb-3">
               <li class="list-group-item">
-                <strong>Title:</strong> {{ fine.borrow.book.title }}
+                <strong>Title:</strong> {{ fine.borrow.book.title|title }}
+              </li>
+              <li class="list-group-item">
+                <strong>Subject:</strong> {{ fine.borrow.book.subject|title }}
               </li>
               <li class="list-group-item">
                 <strong>ISBN:</strong> {{ fine.borrow.book.isbn }}
               </li>
               <li class="list-group-item">
-                <strong>Shelf:</strong> {{ fine.borrow.book.shelf.name }}
+                <strong>Shelf:</strong> {{ fine.borrow.book.shelf.name|title }}
               </li>
             </ul>
 

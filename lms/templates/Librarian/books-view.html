@@ -16,9 +16,11 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <p>Book Name: <strong>{{book.title}}</strong></p>
+                        <p>Book Name: <strong>{{book.title|title}}</strong></p>
+                        <p>ISBN: <strong>{{book.author |title}}</strong></p>
                         <p>ISBN: <strong>{{book.isbn}}</strong></p>
-                        <p>Subject: <strong>{{book.subject}}</strong></p>
+                        <p>Subject: <strong>{{book.subject|title}}</strong></p>
+                        
                     </div>
                 </div>
             </div>

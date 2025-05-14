@@ -117,7 +117,7 @@ def Shelves(request):
     ).annotate(
         book_count=Count('book'),
         space_left=F('capacity') - Count('book')
-    ).order_by('id')
+    ).order_by('name')
 
     # Apply space filter
     if space_filter == 'available':
@@ -157,7 +157,7 @@ def NewShelf(request):
         else:
             # Save the new shelf
             Shelf.objects.create(name=name, level=level, capacity=int(capacity))
-            messages.success(request, f"{name} shelf added successfully!")
+            messages.success(request, "Shelf added successfully!")
             return redirect('new-shelf')  # Replace 'shelf-list' with the name of your shelf list URL pattern
        
     context = {
@@ -182,13 +182,13 @@ def EditShelf(request, shelf_id):
         elif not capacity.isdigit() or int(capacity) <= 0:
             messages.error(request, "Capacity must be a positive number!")
         elif Shelf.objects.filter(name=name).exists():
-            messages.error(request, f"{name} shelf already exist!")
+            messages.error(request, "Shelf already exist!")
         else:
             # Update the shelf details
             shelf.name = name
             shelf.capacity = int(capacity)
             shelf.save()
-            messages.success(request, f"{shelf.name} updated successfully!")
+            messages.success(request, " updated successfully!")
             return redirect('shelves')  # Replace 'shelves' with your shelf list URL pattern
     
     context = {
@@ -206,7 +206,7 @@ def DeleteShelf(request, shelf_id):
     # Check if the request method is POST to confirm the deletion
     if request.method == "POST":
         shelf.delete()
-        messages.success(request, f"{shelf.name} deleted successfully!")
+        messages.success(request, "Shelf deleted successfully!")
         return redirect('shelves')  # Redirect to the shelves list page
 
     context = {
@@ -754,6 +754,7 @@ def NewStudent(request):
     # For GET request, show the form to create a new student
     context = {
         'title': 'New Student',
+        'student_gender_choices': Student.STUDENT_GENDER_CHOICES,
         'student_form_choices': Student.STUDENT_FORM_CHOICES,  # Pass form choices here if needed
     }
     return render(request, 'Librarian/students-new.html', context)

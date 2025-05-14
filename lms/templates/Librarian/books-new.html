@@ -47,7 +47,7 @@
                                     <select id="subject" name="subject" class="form-select" required>
                                         <option value="">Select Subject</option>
                                         {% for subject in subjects %}
-                                            <option value="{{ subject.id }}">{{ subject.name }}</option>
+                                            <option value="{{ subject.id }}">{{subject.level|title }}-{{ subject.name|title }} </option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -68,7 +68,7 @@
                                     <select id="shelf" name="shelf" class="form-select" required>
                                         <option value="">Select Shelf</option>
                                         {% for shelf in shelves %}
-                                            <option value="{{ shelf.id }}">{{ shelf.name }} ({{ shelf.current_load }}/{{ shelf.capacity }})</option>
+                                            <option value="{{ shelf.id }}">{{ shelf.level|title }} {{ shelf.name|title }} ({{ shelf.current_load }}/{{ shelf.capacity }})</option>
                                         {% endfor %}
                                     </select>
                                 </div>

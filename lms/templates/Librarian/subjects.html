@@ -72,9 +72,9 @@
                             {% for subject in subjects %}
                             <tr>
                                 <td class="text-center">
-                                    {{subject.level | capfirst}}
+                                    {{subject.level | title}}
                                 </td>
-                                <td class="text-center">{{ subject.name | capfirst }}</td>
+                                <td class="text-center">{{ subject.name | title }}</td>
                                 <td class="text-center">{{ subject.book_count }}</td>
                                 <td>
                                     <a href="{% url 'subject-edit' subject.id %}" class="btn btn-sm btn-primary">Edit</a>
