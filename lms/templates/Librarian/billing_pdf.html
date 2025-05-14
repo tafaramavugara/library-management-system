@@ -17,6 +17,7 @@
             border: 1px solid black;
             padding: 8px;
             text-align: center;
+            text-size: small;
         }
         th {
             background-color: #f2f2f2;
@@ -45,7 +46,8 @@
 
     <h1>Billing Report for {{ student.first_name }} {{ student.last_name }}</h1>
     <p>Student ID: {{ student.student_id }}</p>
-
+    <p>Student Class: {{student.form}}</p>
+   
     <table>
         <thead>
             <tr>
@@ -63,8 +65,8 @@
             {% for borrow in borrowed_books %}
             <tr>
                 <td><small>{{ borrow.book.isbn }}</small></td>
-                <td><small>{{ borrow.book.subject.name }}</small></td>
-                <td><small>{{ borrow.book.title }}</small></td>
+                <td><small>{{ borrow.book.subject.name|title }}</small></td>
+                <td><small>{{ borrow.book.title |title }}</small></td>
                 <td><small>{{ borrow.book.shelf.name }}</small></td>
                 <td><small>{{ borrow.status|capfirst }}</small></td>
                 <td><small>{{ borrow.borrow_date }}</small></td>
@@ -79,6 +81,7 @@
                 </td>
                 <td><small>${{ borrow.fine|floatformat:2 }}</small></td>
             </tr>
+            <p>Booke Level: {{borrow.book.subject.level|title}}</p>
             {% endfor %}
         </tbody>
         <tfoot>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>404 Galaxy</title>
+  <style>
+    :root {
+      --color: #595959;
+      --easeSmooth: cubic-bezier(0.39, 0.575, 0.28, 0.995);
+      --anims: float, floatReverse, float2, floatReverse2;
+    }
+
+    body {
+      margin: 0;
+      font-size: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: white;
+      color: black;
+      overflow: hidden;
+    }
+
+    .content {
+      position: relative;
+      width: 600px;
+      max-width: 100%;
+      margin: 20px;
+      background: white;
+      padding: 60px 40px;
+      text-align: center;
+      box-shadow: -10px 10px 67px -12px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      animation: apparition 0.8s 1.2s var(--easeSmooth) forwards;
+    }
+
+    .content p {
+      font-size: 1.3rem;
+      margin-top: 0;
+      margin-bottom: 0.6rem;
+      letter-spacing: 0.1rem;
+      color: var(--color);
+    }
+
+    .content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .content button {
+      display: inline-block;
+      margin-top: 2rem;
+      padding: 0.5rem 1rem;
+      border: 3px solid var(--color);
+      background: transparent;
+      font-size: 1rem;
+      color: var(--color);
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .particle {
+      position: absolute;
+      display: block;
+      pointer-events: none;
+    }
+
+    @keyframes apparition {
+      from {
+        opacity: 0;
+        transform: translateY(100px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(180px); }
+    }
+
+    @keyframes floatReverse {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-180px); }
+    }
+
+    @keyframes float2 {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(28px); }
+    }
+
+    @keyframes floatReverse2 {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-28px); }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <!-- 80 Particle spans -->
+    <script>
+      const container = document.querySelector('main.container');
+      const anims = ['float', 'floatReverse', 'float2', 'floatReverse2'];
+
+      for (let i = 0; i < 80; i++) {
+        const span = document.createElement('span');
+        span.className = 'particle';
+        span.innerText = i < 40 ? '4' : '0';
+
+        const size = Math.floor(Math.random() * 20) + 10;
+        const blur = i * 0.02;
+        const speed = Math.floor(Math.random() * 20) + 20;
+        const delay = (Math.floor(Math.random() * 10)) * 0.1;
+        const anim = anims[Math.floor(Math.random() * anims.length)];
+
+        span.style.top = `${Math.random() * 100}%`;
+        span.style.left = `${Math.random() * 100}%`;
+        span.style.fontSize = `${size}px`;
+        span.style.filter = `blur(${blur}px)`;
+        span.style.animation = `${anim} ${speed}s infinite`;
+        span.style.animationDelay = `${delay}s`;
+
+        container.appendChild(span);
+      }
+    </script>
+
+    <article class="content">
+      <p>Ops!</p>
+      <p>Error<strong>404</strong> Page not found.</p>
+      <p><button onclick="history.back()">Go back</button></p>
+    </article>
+  </main>
+</body>
+</html>

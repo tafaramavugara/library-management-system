@@ -31,6 +31,9 @@
               <li class="list-group-item">
                 <strong>Title:</strong> {{ fine.borrow.book.title|title }}
               </li>
+               <li class="list-group-item">
+                <strong>Author:</strong> {{ fine.borrow.book.author|title }}
+              </li>
               <li class="list-group-item">
                 <strong>Subject:</strong> {{ fine.borrow.book.subject|title }}
               </li>
@@ -54,7 +57,7 @@
                 <strong>Returned On:</strong> {{ fine.borrow.return_date|default:"Not Returned" }}
               </li>
               <li class="list-group-item">
-                <strong>Amount:</strong> {{ fine.amount }} TZS
+                <strong>Amount:</strong>$ {{ fine.amount }} 
               </li>
               <li class="list-group-item">
                 <strong>Status:</strong>
