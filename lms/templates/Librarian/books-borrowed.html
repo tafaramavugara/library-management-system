@@ -112,7 +112,7 @@
                           {% if borrow.status == 'borrowed' %}
                           <a href="{% url 'lib-return-book' borrow.id %}" class="btn btn-sm btn-primary" title="Return this borrowed book">Return</a>
                           {% endif %}
-                          <a href="{% url 'billing_pdf' borrow.id %}" class="btn btn-sm btn-secondary">Print</a>
+                          {% comment %} <a href="{% url 'billing_pdf' borrow.id %}" class="btn btn-sm btn-secondary">Print</a> {% endcomment %}
                         </td>
                       </tr>
                     {% endfor %}

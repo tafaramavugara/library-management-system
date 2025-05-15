@@ -55,6 +55,8 @@ class Book(models.Model):
     shelf = models.ForeignKey(Shelf, on_delete=models.CASCADE)
     form = models.CharField(max_length=1, choices=BOOK_FORM_CHOICES)  # Corrected this line
     price = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)  # Add price field
+    is_lost = models.BooleanField(default=False)  # <- Soft delete marker
+
 
     created_at = models.DateField(auto_now_add=True)
 
@@ -65,6 +67,11 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def delete(self, *args, **kwargs):
+        # Override delete to prevent actual deletion
+        self.is_lost = True
+        self.save()
 
 
 class Student(models.Model):
@@ -189,6 +196,11 @@ class Borrow(models.Model):
                 print(f"New fine created: {fine}")
             else:
                 print(f"Fine updated: {fine}")
+        
+        # Mark book as lost if applicable
+        if self.status == 'lost' and self.book:
+            self.book.is_lost = True
+            self.book.save()
 
         # Save the changes to the Borrow record
         super().save(*args, **kwargs)

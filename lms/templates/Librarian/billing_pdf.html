@@ -81,13 +81,13 @@
                 </td>
                 <td><small>${{ borrow.fine|floatformat:2 }}</small></td>
             </tr>
-            <p>Booke Level: {{borrow.book.subject.level|title}}</p>
+            <p>Book: {{ borrow.book.title |title }} - {{borrow.book.subject.level|title}}</p>
             {% endfor %}
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="7" style="text-align: right;">Subtotal:</td>
-                <td>${{ subtotal|floatformat:2 }}</td>
+                <td colspan="2">Subtotal (Unpaid Fines):</td>
+                <td><strong>${{ subtotal|floatformat:2 }}</strong></td>
             </tr>
         </tfoot>
     </table>

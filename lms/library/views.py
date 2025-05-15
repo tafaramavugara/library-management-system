@@ -241,7 +241,7 @@ def NewBorrow(request):
 
         try:
             student = Student.objects.get(id=student_id)
-            book = Book.objects.get(isbn=book_isbn)
+            book = Book.objects.get(isbn=book_isbn).filter(is_lost=False)
 
             # Check if the book is already borrowed
             if Borrow.objects.filter(book=book, status='borrowed').exists():
@@ -387,9 +387,9 @@ def Books(request):
     subject_id = request.GET.get('subject', '').strip()
 
     # Base queryset
-    books = Book.objects.all().order_by('subject__name')
+    books = Book.objects.filter(is_lost=False).order_by('subject__name')
     books_exist = Book.objects.exists()
-    total_books = Book.objects.all().count()
+    total_books = Book.objects.filter(is_lost=False).count()
 
     # Apply filters
     if q:
@@ -589,66 +589,65 @@ def DeleteBook(request, book_id):
     }
     return render(request, 'Librarian/confirm-delete-book.html', context)
 
-
 @login_required(login_url='lib-login')
 def Billing(request):
-    # Get search query for student_id and filter query for status
     student_id_query = request.GET.get('student_id', '')
     status_query = request.GET.get('status', '')
 
-    # Start with all borrowed, returned, lost, or damaged books with fines greater than 0
-    books = Borrow.objects.filter(fine__gt=0, status__in=['borrowed', 'returned', 'lost', 'damaged'])
+    # Filter borrows with related unpaid fines
+    books = Borrow.objects.filter(
+        fines__status='unpaid',
+        status__in=['borrowed', 'returned', 'lost', 'damaged']
+    ).distinct()
 
-    # Apply search filter for student_id if provided
     if student_id_query:
-        books = books.filter(student__id__icontains=student_id_query)
+        books = books.filter(student__student_id__icontains=student_id_query)
 
-    # Apply status filter if provided
     if status_query:
         books = books.filter(status=status_query)
 
-    # Set up pagination with 10 books per page
-    paginator = Paginator(books, 10)  # Show 10 books per page
-    page_number = request.GET.get('page')  # Get the page number from the URL query parameters
-    page_obj = paginator.get_page(page_number)  # Get the page object
+    # Calculate subtotal of unpaid fines
+    subtotal = Fine.objects.filter(
+        borrow__in=books,
+        status='unpaid'
+    ).aggregate(total=Sum('amount'))['total'] or 0
+
+    paginator = Paginator(books, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     context = {
         'title': 'Books with Fines',
-        'borrowed_books': page_obj,  # Pass the page object to the template
+        'borrowed_books': page_obj,
         'student_id_query': student_id_query,
         'status_query': status_query,
+        'subtotal': subtotal,
     }
     return render(request, 'Librarian/billing.html', context)
 
-
 def billing_pdf(request, student_id):
-    # Fetch the student's borrowed books and fines
     student = get_object_or_404(Student, pk=student_id)
-    borrowed_books = Borrow.objects.filter(student=student)
-    subtotal = sum(borrow.fine for borrow in borrowed_books)
+    borrowed_books = Borrow.objects.filter(student=student).distinct()
 
-     # System name
+    # Only include unpaid fines in the subtotal
+    unpaid_fines = Fine.objects.filter(borrow__in=borrowed_books, status='unpaid')
+    subtotal = unpaid_fines.aggregate(total=Sum('amount'))['total'] or 0
+
     system_name = "Library Management System"
 
-    # Prepare the context for rendering the PDF template
     context = {
         'borrowed_books': borrowed_books,
         'student': student,
         'subtotal': subtotal,
-        'system_name':system_name,
+        'system_name': system_name,
         'now': now(),
     }
 
-    # Render the HTML template to a string
     html_content = render_to_string('Librarian/billing_pdf.html', context)
-
-    # Generate PDF from HTML
     pdf_file = HTML(string=html_content).write_pdf()
 
-    # Return the PDF response
     response = HttpResponse(pdf_file, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="billing_{student.student_id}.pdf"'
-
     return response
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
@@ -1008,7 +1007,7 @@ def PayFine(request, fine_id):
         fine.save()
         messages.success(request, 'Fine has been marked as paid.')
 
-    return redirect('lib-books-borrowed')  # Or wherever appropriate
+    return redirect('lib-fine-list')  # Or wherever appropriate
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 #                                                       END FINES VIEWS
