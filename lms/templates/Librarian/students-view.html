@@ -58,7 +58,7 @@
                       <td>{{ borrow.borrow_date }}</td>
                       <td>{{ borrow.due_date }}</td>
                       <td>{{ borrow.return_date|default:"Not Returned" }}</td>
-                      <td>{{ borrow.status }}</td>
+                      <td>{{ borrow.status|title }}</td>
                     </tr>
                   {% empty %}
                     <tr>
@@ -84,7 +84,7 @@
                     <tr>
                       <td>${{ fine.amount }}</td>
                       <td>{{ fine.reason }}</td>
-                      <td>{{ fine.status }}</td>
+                      <td> <span class="{% if fine.status == 'paid' %}text-success{% elif fine.status == 'unpaid' %}text-danger{% endif %}">{{ fine.status|title }}</span></td>
                       <td>{{ fine.created_at }}</td>
                     </tr>
                   {% empty %}
@@ -93,6 +93,12 @@
                     </tr>
                   {% endfor %}
                 </tbody>
+                <tfoot>
+                  <tr>
+                    <td>Unpaid Fine:</td>
+                    <td>${{ total_unpaid_fine|floatformat:2 }}</td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>

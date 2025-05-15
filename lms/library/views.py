@@ -801,8 +801,15 @@ def SingleStudent(request, student_id):
     # Get the associated fines for each borrowed book
     fines_history = Fine.objects.filter(borrow__student=student).order_by('-created_at')
 
+    # Calculate total unpaid fine
+    total_unpaid_fine = Fine.objects.filter(
+        borrow__student=student, 
+        status='unpaid'
+    ).aggregate(total=Sum('amount'))['total'] or 0
+
     context = {
         'title': f'Student Profile - {student.first_name} {student.last_name}',
+        'total_unpaid_fine': total_unpaid_fine,
         'student': student,  # Student information
         'borrowed_books': borrowed_books,  # Borrowed books by the student
         'fines_history': fines_history,  # Fines allocated to the student
